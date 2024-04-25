@@ -1,10 +1,6 @@
 # ElasticPopulation Plugin Documentation
 
-## Plugin Information
-**Name:** ElasticPopulation  
-**Version:** 1.0.2  
-**Author:** Papa  
-**Description:** Dynamically adjusts the server max population to always be the current player count plus a configurable offset, with a cooldown feature to enhance performance.
+**Description:** Rust server plugin that dynamically adjusts the server max population to always be the current player count plus a configurable offset, with a cooldown feature to enhance performance.
 
 ## Features
 - **Dynamic Population Control:** Automatically updates the server's maximum player limit based on the current number of players, ensuring the max players setting is always one step ahead of the current population.
