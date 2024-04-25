@@ -1,7 +1,3 @@
-Certainly! Here's the updated documentation for your "ElasticPopulation" plugin to submit to uMod for approval:
-
----
-
 # ElasticPopulation Plugin Documentation
 
 ## Plugin Information
@@ -48,7 +44,3 @@ If you encounter issues, check the server console for any error messages related
 
 ## Support
 For support, questions, or to provide feedback, please visit the ElasticPopulation plugin page on uMod. You can also contribute to improving the plugin by participating in discussions or submitting pull requests with enhancements.
-
----
-
-This documentation should be included with your plugin file when submitting to uMod to ensure users have all the necessary information to successfully install and configure the plugin on their servers.
