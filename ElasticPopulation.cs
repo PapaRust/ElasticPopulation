@@ -4,16 +4,19 @@ using System;
 
 namespace Oxide.Plugins
 {
-    [Info("ElasticPopulation", "Papa", "1.0.2")]
-    [Description("Dynamically adjusts server max population based on current player count with a configurable cooldown.")]
+    [Info("ElasticPopulation", "Papa", "1.0.3")]
+    [Description("Dynamically adjusts server max population based on current player count with optimized cooldown handling.")]
     public class ElasticPopulation : RustPlugin
     {
         private ConfigData configData;
+        private bool timerActive = false;
 
         class ConfigData
         {
             public int MaxPlayersOffset { get; set; }
             public float CooldownPeriod { get; set; }
+            public int MaximumPopulation { get; set; }
+            public bool ConsoleMessagesEnabled { get; set; }
         }
 
         protected override void LoadDefaultConfig()
@@ -22,7 +25,9 @@ namespace Oxide.Plugins
             configData = new ConfigData
             {
                 MaxPlayersOffset = 1,
-                CooldownPeriod = 10.0f
+                CooldownPeriod = 10.0f,
+                MaximumPopulation = 200,
+                ConsoleMessagesEnabled = true
             };
             SaveConfig();
         }
@@ -49,23 +54,39 @@ namespace Oxide.Plugins
 
         private void OnPlayerConnected(BasePlayer player)
         {
-            SetMaxPlayers();
+            StartCooldownTimer();
         }
 
         private void OnPlayerDisconnected(BasePlayer player, string reason)
         {
-            timer.Once(configData.CooldownPeriod, SetMaxPlayers);
+            StartCooldownTimer();
         }
 
         private void SetMaxPlayers()
         {
             int currentPlayers = BasePlayer.activePlayerList.Count;
-            int newMaxPlayers = currentPlayers + configData.MaxPlayersOffset;
+            int newMaxPlayers = Math.Min(currentPlayers + configData.MaxPlayersOffset, configData.MaximumPopulation);
 
             if (ConVar.Server.maxplayers != newMaxPlayers)
             {
                 ConVar.Server.maxplayers = newMaxPlayers;
-                Puts($"Max players adjusted to: {newMaxPlayers}");
+                if (configData.ConsoleMessagesEnabled)
+                {
+                    Puts($"Max players adjusted to: {newMaxPlayers}");
+                }
+            }
+        }
+
+        private void StartCooldownTimer()
+        {
+            if (!timerActive)
+            {
+                timerActive = true;
+                timer.Once(configData.CooldownPeriod, () =>
+                {
+                    SetMaxPlayers();
+                    timerActive = false;
+                });
             }
         }
     }
