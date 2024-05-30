@@ -4,7 +4,7 @@ using System;
 
 namespace Oxide.Plugins
 {
-    [Info("Elastic Population", "Papa", "1.0.4")]
+    [Info("ElasticPopulation", "Papa", "1.0.7")]
     [Description("Dynamically adjusts server max population based on current player count with optimized cooldown handling.")]
     public class ElasticPopulation : RustPlugin
     {
@@ -16,6 +16,7 @@ namespace Oxide.Plugins
             public int MaxPlayersOffset { get; set; }
             public float CooldownPeriod { get; set; }
             public int MaximumPopulation { get; set; }
+            public int MinimumPopulation { get; set; }
             public bool ConsoleMessagesEnabled { get; set; }
         }
 
@@ -27,6 +28,7 @@ namespace Oxide.Plugins
                 MaxPlayersOffset = 1,
                 CooldownPeriod = 10.0f,
                 MaximumPopulation = 200,
+                MinimumPopulation = 1,
                 ConsoleMessagesEnabled = true
             };
             SaveConfig();
@@ -65,7 +67,7 @@ namespace Oxide.Plugins
         private void SetMaxPlayers()
         {
             int currentPlayers = BasePlayer.activePlayerList.Count;
-            int newMaxPlayers = Math.Max(currentPlayers + configData.MaxPlayersOffset, ConVar.Server.maxplayers);
+            int newMaxPlayers = Math.Max(currentPlayers + configData.MaxPlayersOffset, configData.MinimumPopulation);
             newMaxPlayers = Math.Min(newMaxPlayers, configData.MaximumPopulation);
 
             if (ConVar.Server.maxplayers != newMaxPlayers)
@@ -80,15 +82,17 @@ namespace Oxide.Plugins
 
         private void StartCooldownTimer()
         {
-            if (!timerActive)
+            if (timerActive)
             {
-                timerActive = true;
-                timer.Once(configData.CooldownPeriod, () =>
-                {
-                    SetMaxPlayers();
-                    timerActive = false;
-                });
+                return;
             }
+
+            timerActive = true;
+            timer.Once(configData.CooldownPeriod, () =>
+            {
+                SetMaxPlayers();
+                timerActive = false;
+            });
         }
     }
 }
