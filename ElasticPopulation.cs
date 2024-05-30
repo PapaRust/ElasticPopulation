@@ -4,7 +4,7 @@ using System;
 
 namespace Oxide.Plugins
 {
-    [Info("ElasticPopulation", "Papa", "1.0.3")]
+    [Info("Elastic Population", "Papa", "1.0.4")]
     [Description("Dynamically adjusts server max population based on current player count with optimized cooldown handling.")]
     public class ElasticPopulation : RustPlugin
     {
@@ -65,7 +65,8 @@ namespace Oxide.Plugins
         private void SetMaxPlayers()
         {
             int currentPlayers = BasePlayer.activePlayerList.Count;
-            int newMaxPlayers = Math.Min(currentPlayers + configData.MaxPlayersOffset, configData.MaximumPopulation);
+            int newMaxPlayers = Math.Max(currentPlayers + configData.MaxPlayersOffset, ConVar.Server.maxplayers);
+            newMaxPlayers = Math.Min(newMaxPlayers, configData.MaximumPopulation);
 
             if (ConVar.Server.maxplayers != newMaxPlayers)
             {
