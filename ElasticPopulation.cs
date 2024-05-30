@@ -28,7 +28,7 @@ namespace Oxide.Plugins
                 MaxPlayersOffset = 1,
                 CooldownPeriod = 10.0f,
                 MaximumPopulation = 200,
-                MinimumPopulation = 1,
+                MinimumPopulation = 100,
                 ConsoleMessagesEnabled = true
             };
             SaveConfig();
